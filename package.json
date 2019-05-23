@@ -1,0 +1,55 @@
+{
+  "name": "eslint-plugin-microsoft-typescript",
+  "version": "0.1.0",
+  "description": "ESlint rules for TypeScript",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin-microsoft-typescrip",
+    "typescript"
+  ],
+  "author": {
+    "name": "Alexander Tarasyuk",
+    "email": "alexander.tarasyuk@outlook.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a-tarasyuk/eslint-plugin-microsoft-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/a-tarasyuk/eslint-plugin-microsoft-typescript/issues"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare": "npm run build",
+    "test": "jest",
+    "lint": "eslint -c .eslintrc src/**/*.ts tests/**/*.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/eslint": "4.16.6",
+    "@types/node": "12.0.4",
+    "@typescript-eslint/eslint-plugin": "1.9.0",
+    "@typescript-eslint/experimental-utils": "1.9.0",
+    "@typescript-eslint/parser": "1.9.0",
+    "eslint": "5.16.0",
+    "husky": "2.3.0",
+    "jest": "24.8.0",
+    "ts-jest": "24.0.2",
+    "typescript": "3.5.1"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/parser": "^1.9.0",
+    "eslint": "^5.16.0",
+    "typescript": "^3.5.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm test && npm run build"
+    }
+  }
+}

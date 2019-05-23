@@ -1,0 +1,3 @@
+noIncrementDecrementRule - { no-plusplus: ["error"] }
+nextLineRule - { brace-style: ["error", "stroustrup"] }
+noBomRule - { unicode-bom: ["error", "always"] }
