@@ -19,8 +19,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "comma-dangle": ["error", "always-multiline"],
     "indent": "off",
-    "@typescript-eslint/indent": ["error", 2],
-    "no-regex-spaces": "off"
+    "@typescript-eslint/indent": ["error", 2]
   },
   "globals": {},
   "settings": {}

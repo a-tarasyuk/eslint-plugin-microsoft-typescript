@@ -72,27 +72,31 @@ interface Props {
 
   invalid: [{
     code: `const  a  = {};`,
-    errors: [{ messageId: 'noDoubleSpaceError' }, { messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 6 }],
   }, {
     code: `function   fn() {}`,
-    errors: [{ messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 9 }],
   }, {
     code: `class   Cl  {}`,
-    errors: [{ messageId: 'noDoubleSpaceError' }, { messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 6 }],
   }, {
     code: 'const str =  ` string template`;',
-    errors: [{ messageId: 'noDoubleSpaceError' }],
-  }, {
-    code: `const rgx  = /  regexp  /g;`,
-    errors: [{ messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 12 }],
   }, {
     code: `/** comment  */`,
-    errors: [{ messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 12 }],
   }, {
     code: `/** comment  with   many spaces   */`,
-    errors: [{ messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 12 }],
   }, {
     code: `// comment  with   many spaces`,
-    errors: [{ messageId: 'noDoubleSpaceError' }],
+    errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 11 }],
+  }, {
+    code: `
+const a = 1;
+const b = 2;
+const c =  3;
+`.trim(),
+    errors: [{ messageId: 'noDoubleSpaceError', line: 3, column: 10 }],
   }],
 });

@@ -19,62 +19,39 @@ export default createRule({
 
   create: function (context) {
     const sourceCode = context.getSourceCode();
-    const sourceCodeText = sourceCode.getText();
     const tokensAndComments = sourceCode.tokensAndComments;
-    const tokensAndCommentsLen = tokensAndComments.length;
-    const DOUBLE_SPACE = '  ';
-    const PARAM = '@param';
-    const isComment = (token: TSESTree.Token | TSESTree.Comment) => token.type === AST_TOKEN_TYPES.Block || token.type === AST_TOKEN_TYPES.Line;
+    const lines = sourceCode.getLines();
+    const validTokens = tokensAndComments.filter(token => (
+      token.type === AST_TOKEN_TYPES.RegularExpression || token.type === AST_TOKEN_TYPES.Template || token.type === AST_TOKEN_TYPES.String
+    ));
+    const hasError = (pos: number) => !validTokens.some(token => token.range[0] <= pos && token.range[1] > pos);
 
-    const shouldSkipToken = (token: TSESTree.Token | TSESTree.Comment, leftIndex: number) => (
-      leftIndex === tokensAndCommentsLen - 1
-        || token.type === AST_TOKEN_TYPES.RegularExpression
-        || token.type === AST_TOKEN_TYPES.Template
-        || token.type === AST_TOKEN_TYPES.String
-    );
-
-    const checkDoubleSpaceInComment = (comment: string, token: TSESTree.Token | TSESTree.Comment) => {
-      const firstNonSpace = /\S/.exec(comment);
-      if (!firstNonSpace) {
-        return;
-      }
-
-      const rgx = /[^/*. ]  [^-!/= ]/g;
-      rgx.lastIndex = firstNonSpace.index;
-      const doubleSpace = rgx.exec(comment);
-
-      if (doubleSpace && !comment.includes(PARAM)) {
-        context.report({
-          messageId: 'noDoubleSpaceError',
-          node: token,
-          loc: { line: token.loc.start.line, column: doubleSpace.index + 1 },
-        });
-      }
-    };
-
-    const checkDoubleSpace = () => {
-      tokensAndComments.forEach((leftToken, leftIndex) => {
-        if (isComment(leftToken)) {
-          const [start, end] = leftToken.range;
-
-          sourceCodeText.slice(start, end).split('\n')
-            .forEach(comment => checkDoubleSpaceInComment(comment, leftToken));
-
+    const checkDoubleSpace = (node: TSESTree.Node) => {
+      lines.forEach((line, index) => {
+        const firstNonSpace = /\S/.exec(line);
+        if (!firstNonSpace || line.includes('@param')) {
           return;
         }
 
-        const rightToken = tokensAndComments[leftIndex + 1];
-        if (shouldSkipToken(leftToken, leftIndex) || isComment(rightToken) || leftToken.loc.start.line < rightToken.loc.end.line) {
+        // Allow common uses of double spaces
+        // * To align `=` or `!=` signs
+        // * To align comments at the end of lines
+        // * To indent inside a comment
+        // * To use two spaces after a period
+        // * To include aligned `->` in a comment
+        const rgx =  /[^/*. ] {2,}[^-!/= ]/g;
+        rgx.lastIndex = firstNonSpace.index;
+        const doubleSpace = rgx.exec(line);
+
+        if (!doubleSpace) {
           return;
         }
 
-        const tokenText = sourceCodeText.slice(leftToken.range[1], rightToken.range[0]);
-        if (tokenText.includes(DOUBLE_SPACE)) {
-          context.report({
-            messageId: 'noDoubleSpaceError',
-            node: rightToken,
-            loc: { column: rightToken.loc.start.column - 1, line: rightToken.loc.start.line },
-          });
+        const pos = lines.slice(0, index)
+          .reduce((len, line) => len + 1 + line.length, 0) + doubleSpace.index;
+
+        if (hasError(pos)) {
+          context.report({ messageId: 'noDoubleSpaceError', node, loc: { line: index + 1, column: doubleSpace.index + 1 } });
         }
       });
     };
