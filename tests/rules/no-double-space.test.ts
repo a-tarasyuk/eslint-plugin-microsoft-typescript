@@ -35,6 +35,8 @@ ruleTester.run('no-double-space', rule, {
   }, {
     code: `   /* comment */`,
   }, {
+    code: `//  `,
+  }, {
     code: `
 const a =
   1;
@@ -45,6 +47,27 @@ const a =
  * comment
  */
     `,
+  }, {
+    code: `
+// comment
+//  - comment
+//  - comment
+`,
+  }, {
+    code: `
+interface Props {
+  prop: string[];  // comment prop
+  propB: string[]; // comment propB
+}`,
+  }, {
+    code: `
+/**
+ * Returns a JSON-encoded value of the type: string[]
+ *
+ * @param exclude A JSON encoded string[] containing the paths to exclude
+ *  when enumerating the directory.
+ */
+`,
   }],
 
   invalid: [{
@@ -67,6 +90,9 @@ const a =
     errors: [{ messageId: 'noDoubleSpaceError' }],
   }, {
     code: `/** comment  with   many spaces   */`,
+    errors: [{ messageId: 'noDoubleSpaceError' }],
+  }, {
+    code: `// comment  with   many spaces`,
     errors: [{ messageId: 'noDoubleSpaceError' }],
   }],
 });

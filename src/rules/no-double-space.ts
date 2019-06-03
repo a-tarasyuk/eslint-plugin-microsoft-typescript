@@ -33,30 +33,38 @@ export default createRule({
         || token.type === AST_TOKEN_TYPES.String
     );
 
-    const checkSoubleSpace = () => {
+    const checkDoubleSpaceInComment = (comment: string, token: TSESTree.Token | TSESTree.Comment) => {
+      const firstNonSpace = /\S/.exec(comment);
+      if (!firstNonSpace) {
+        return;
+      }
+
+      const rgx = /[^/*. ] {2,}[^-!/= ]/g;
+      rgx.lastIndex = firstNonSpace.index;
+      const doubleSpace = rgx.exec(comment);
+
+      if (doubleSpace && !comment.includes(PARAM)) {
+        context.report({
+          messageId: 'noDoubleSpaceError',
+          node: token,
+          loc: { line: token.loc.start.line, column: doubleSpace.index + 1 },
+        });
+      }
+    };
+
+    const checkDoubleSpace = () => {
       tokensAndComments.forEach((leftToken, leftIndex) => {
         if (isComment(leftToken)) {
           const [start, end] = leftToken.range;
-          const comment = sourceCodeText.slice(start, end);
 
-          if (comment.includes(PARAM)) {
-            return;
-          }
-
-          const column = comment.indexOf(DOUBLE_SPACE);
-          if (column >= 0) {
-            context.report({
-              messageId: 'noDoubleSpaceError',
-              node: leftToken,
-              loc: { line: leftToken.loc.start.line, column },
-            });
-          }
+          sourceCodeText.slice(start, end).split('\n')
+            .forEach(comment => checkDoubleSpaceInComment(comment, leftToken));
 
           return;
         }
 
         const rightToken = tokensAndComments[leftIndex + 1];
-        if (shouldSkipToken(leftToken, leftIndex) || leftToken.loc.start.line < rightToken.loc.end.line) {
+        if (shouldSkipToken(leftToken, leftIndex) || isComment(rightToken) || leftToken.loc.start.line < rightToken.loc.end.line) {
           return;
         }
 
@@ -72,7 +80,7 @@ export default createRule({
     };
 
     return {
-      Program: checkSoubleSpace,
+      Program: checkDoubleSpace,
     };
   },
 });
