@@ -17,6 +17,10 @@ ruleTester.run('no-double-space', rule, {
   }, {
     code: `function fn() {}`,
   }, {
+    code: `const a = "  ";`,
+  }, {
+    code: `// ^                                ^`,
+  }, {
     code: `class Cl {}`,
   }, {
     code: `// comment `,
@@ -74,10 +78,10 @@ interface Props {
     code: `const  a  = {};`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 6 }],
   }, {
-    code: `function   fn() {}`,
+    code: `function  fn() {}`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 9 }],
   }, {
-    code: `class   Cl  {}`,
+    code: `class  Cl {}`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 6 }],
   }, {
     code: 'const str =  ` string template`;',
@@ -86,10 +90,10 @@ interface Props {
     code: `/** comment  */`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 12 }],
   }, {
-    code: `/** comment  with   many spaces   */`,
+    code: `/** comment  with  many spaces   */`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 12 }],
   }, {
-    code: `// comment  with   many spaces`,
+    code: `// comment  with  many spaces`,
     errors: [{ messageId: 'noDoubleSpaceError', line: 1, column: 11 }],
   }, {
     code: `
