@@ -39,7 +39,7 @@ export default createRule({
         return;
       }
 
-      const rgx = /[^/*. ] {2,}[^-!/= ]/g;
+      const rgx = /[^/*. ]  [^-!/= ]/g;
       rgx.lastIndex = firstNonSpace.index;
       const doubleSpace = rgx.exec(comment);
 
