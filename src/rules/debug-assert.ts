@@ -19,7 +19,10 @@ export default createRule({
   defaultOptions: [],
 
   create: function (context) {
-    const isString = (node: TSESTree.Node): boolean => node.type === AST_NODE_TYPES.Literal && typeof node.value === 'string';
+    const isArrowFunction = (node: TSESTree.Node) => node.type === AST_NODE_TYPES.ArrowFunctionExpression;
+    const isStringLiteral = (node: TSESTree.Node): boolean => (
+      (node.type === AST_NODE_TYPES.Literal && typeof node.value === 'string') || node.type === AST_NODE_TYPES.TemplateLiteral
+    );
 
     const isDebugAssert = (node: TSESTree.MemberExpression): boolean => (
       node.object.type === AST_NODE_TYPES.Identifier
@@ -36,7 +39,7 @@ export default createRule({
       }
 
       const message1Node = args[1];
-      if (message1Node && !isString(message1Node)) {
+      if (message1Node && !isStringLiteral(message1Node)) {
         context.report({ messageId: 'secondArgumentDebugAssertError', node: message1Node });
       }
 
@@ -45,7 +48,7 @@ export default createRule({
       }
 
       const message2Node = args[2];
-      if (message2Node && (!isString(message2Node) && message2Node.type !== AST_NODE_TYPES.ArrowFunctionExpression)) {
+      if (message2Node && (!isStringLiteral(message2Node) && !isArrowFunction(message2Node))) {
         context.report({ messageId: 'thirdArgumentDebugAssertError', node: message2Node });
       }
     };

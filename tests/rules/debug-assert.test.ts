@@ -17,6 +17,10 @@ ruleTester.run('debug-assert', rule, {
     code: `Debug.assert(true, 'error message 1', 'error message 2')`,
   }, {
     code: `Debug.assert(true, 'error message 1', () => {})`,
+  }, {
+    code: 'Debug.assert(true, `error message 1`, () => {})',
+  }, {
+    code: `Debug.assert(true, "error message 1", () => {})`,
   }],
 
   invalid: [{
