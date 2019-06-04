@@ -13,25 +13,25 @@ export default createRule({
       noTypeAssertionWhitespace: `Excess trailing whitespace found around type assertion`,
     },
     schema: [],
-    type: 'suggestion',
+    type: 'problem',
   },
   defaultOptions: [],
 
   create: function (context) {
+    const sourceCode = context.getSourceCode();
     const checkTypeAssertionWhitespace = (node: TSESTree.TSTypeAssertion) => {
-      const leftSideWhitespaceStart = node.typeAnnotation.range[1] + 1;
-      const rightSideWhitespaceEnd = node.expression.range[0];
-      const startLine = node.loc.start.line;
-      const endLine = node.loc.end.line;
+      const leftToken = sourceCode.getLastToken(node.typeAnnotation);
+      const rightToken = sourceCode.getFirstToken(node.expression);
 
-      if (leftSideWhitespaceStart !== rightSideWhitespaceEnd) {
+      if (!leftToken || !rightToken) {
+        return;
+      }
+
+      if (sourceCode.isSpaceBetweenTokens(leftToken, rightToken)) {
         context.report({
           messageId: 'noTypeAssertionWhitespace',
           node,
-          loc: {
-            start: { column: leftSideWhitespaceStart, line: startLine },
-            end: { column: rightSideWhitespaceEnd, line: endLine },
-          },
+          loc: { column: leftToken.loc.end.column + 1, line: leftToken.loc.end.line },
         });
       }
     }
