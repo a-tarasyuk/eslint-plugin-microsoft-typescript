@@ -1,4 +1,4 @@
-import { RuleTester } from '../support/RuleTester';
+import { TS_CONFIG_PATH, RuleTester } from '../support/RuleTester';
 import rule from '../../src/rules/no-double-space';
 
 const ruleTester = new RuleTester({
@@ -8,6 +8,7 @@ const ruleTester = new RuleTester({
     ecmaFeatures: {},
     ecmaVersion: 6,
     sourceType: 'module',
+    project: TS_CONFIG_PATH,
   },
 });
 
@@ -71,6 +72,12 @@ interface Props {
  * @param exclude A JSON encoded string[] containing the paths to exclude
  *  when enumerating the directory.
  */
+`,
+  }, {
+    code: `
+const obj = {
+  content: "function f() {  1; }",
+};
 `,
   }],
 

@@ -1,5 +1,6 @@
-import { AST_TOKEN_TYPES, TSESTree } from '@typescript-eslint/experimental-utils';
-import { createRule } from '../utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { SyntaxKind } from 'typescript';
+import { getEsTreeNodeToTSNodeMap, createRule } from '../utils';
 
 export default createRule({
   name: 'no-double-space',
@@ -18,8 +19,29 @@ export default createRule({
   defaultOptions: [],
 
   create: function (context) {
+    const esTreeNodeToTSNodeMap = getEsTreeNodeToTSNodeMap(context.parserServices);
     const sourceCode = context.getSourceCode();
     const lines = sourceCode.getLines();
+
+    const isLiteral = (node: TSESTree.Node | null) => {
+      if (!node) {
+        return false;
+      }
+
+      const tsNode = esTreeNodeToTSNodeMap.get(node);
+      if (!tsNode) {
+        return false;
+      }
+
+      return [
+        SyntaxKind.NoSubstitutionTemplateLiteral,
+        SyntaxKind.RegularExpressionLiteral,
+        SyntaxKind.TemplateMiddle,
+        SyntaxKind.StringLiteral,
+        SyntaxKind.TemplateHead,
+        SyntaxKind.TemplateTail,
+      ].indexOf(tsNode.kind) >= 0;
+    }
 
     const checkDoubleSpace = (node: TSESTree.Node) => {
       lines.forEach((line, index) => {
@@ -43,9 +65,8 @@ export default createRule({
         }
 
         const locIndex = sourceCode.getIndexFromLoc({ column: doubleSpace.index, line: index + 1 });
-        const token = sourceCode.getTokenByRangeStart(locIndex, { includeComments: true });
-
-        if (token && (token.type === AST_TOKEN_TYPES.RegularExpression || token.type === AST_TOKEN_TYPES.Template || token.type === AST_TOKEN_TYPES.String)) {
+        const sourceNode = sourceCode.getNodeByRangeIndex(locIndex);
+        if (isLiteral(sourceNode)) {
           return;
         }
 
