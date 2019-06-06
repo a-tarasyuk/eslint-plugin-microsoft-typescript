@@ -39,6 +39,18 @@ ruleTester.run('only-arrow-functions', rule, {
       let hasThisParameter = function(this) {}
     `,
     options: [{ allowDeclarations: true }],
+  }, {
+    code: `
+      class A {
+        test() {}
+      }
+    `,
+  }, {
+    code: `
+      const obj = {
+        test() {}
+      }
+    `,
   }],
 
   invalid: [{

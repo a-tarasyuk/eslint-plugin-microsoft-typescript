@@ -28,13 +28,26 @@ export default createRule<Options, MessageId>({
     }],
     type: 'suggestion',
   },
-  defaultOptions: [{ allowNamedFunctions: false, allowDeclarations: false }],
+  defaultOptions: [{
+    allowNamedFunctions: false,
+    allowDeclarations: false,
+  }],
 
   create: function (context, [{ allowNamedFunctions, allowDeclarations }]) {
 
     const isThisParameter = (node: TSESTree.FunctionDeclaration | TSESTree.FunctionExpression) => (
       node.params.length && !!node.params.find(param => param.type === AST_NODE_TYPES.Identifier && param.name === 'this')
     );
+
+    const shouldIgnore = (node: TSESTree.FunctionDeclaration | TSESTree.FunctionExpression) => {
+      const parent = node.parent;
+      if (!parent) {
+        return false;
+      }
+
+      return node.type === AST_NODE_TYPES.FunctionExpression
+        && (parent.type === AST_NODE_TYPES.Property || parent.type === AST_NODE_TYPES.MethodDefinition);
+    }
 
     const stack: boolean[] = [];
     const enterFunction = () => {
@@ -54,7 +67,7 @@ export default createRule<Options, MessageId>({
         return;
       }
 
-      if (allowNamedFunctions && node.id !== null) {
+      if ((allowNamedFunctions && node.id !== null) || shouldIgnore(node)) {
         return;
       }
 
