@@ -36,6 +36,7 @@ Then configure the rules you want to use under the rules section.
 - `object-literal-surrounding-space`
 - `no-type-assertion-whitespace`
 - `type-operator-spacing`
+- `only-arrow-functions`
 - `no-double-space`
 - `boolean-trivia`
 - `no-in-operator`
