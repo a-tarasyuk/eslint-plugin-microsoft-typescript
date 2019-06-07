@@ -41,6 +41,7 @@ Then configure the rules you want to use under the rules section.
 - `boolean-trivia`
 - `no-in-operator`
 - `debug-assert`
+- `no-keywords`
 
 
 ## License and Copyright
