@@ -39,14 +39,18 @@ export default createRule<Options, MessageId>({
       node.params.length && !!node.params.find(param => param.type === AST_NODE_TYPES.Identifier && param.name === 'this')
     );
 
-    const shouldIgnore = (node: TSESTree.FunctionDeclaration | TSESTree.FunctionExpression) => {
+    const isMethodType = (node: TSESTree.Node) => {
+      const types = [
+        AST_NODE_TYPES.MethodDefinition,
+        AST_NODE_TYPES.Property,
+      ];
+
       const parent = node.parent;
       if (!parent) {
         return false;
       }
 
-      return node.type === AST_NODE_TYPES.FunctionExpression
-        && (parent.type === AST_NODE_TYPES.Property || parent.type === AST_NODE_TYPES.MethodDefinition);
+      return node.type === AST_NODE_TYPES.FunctionExpression && types.includes(parent.type)
     }
 
     const stack: boolean[] = [];
@@ -67,7 +71,7 @@ export default createRule<Options, MessageId>({
         return;
       }
 
-      if ((allowNamedFunctions && node.id !== null) || shouldIgnore(node)) {
+      if ((allowNamedFunctions && node.id !== null) || isMethodType(node)) {
         return;
       }
 

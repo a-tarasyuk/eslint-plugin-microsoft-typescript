@@ -6,6 +6,7 @@ import booleanTrivia from './boolean-trivia';
 import noDoubleSpace from './no-double-space';
 import noInOperator from './no-in-operator';
 import debugAssert from './debug-assert';
+import noKeywords from './no-keywords';
 
 export default {
   'object-literal-surrounding-space': objectLiteralSurroundingSpace,
@@ -16,4 +17,5 @@ export default {
   'boolean-trivia': booleanTrivia,
   'no-in-operator': noInOperator,
   'debug-assert': debugAssert,
+  'no-keywords': noKeywords,
 };
