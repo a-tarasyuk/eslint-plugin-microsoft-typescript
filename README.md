@@ -15,6 +15,9 @@ Add `@typescript-eslint/parser` to the parser field and `eslint-plugin-microsoft
 ```json
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }, 
   "plugins": ["microsoft-typescript"]
 }
 ```
@@ -24,6 +27,9 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "plugins": ["microsoft-typescript"],
   "rules": {
     "microsoft-typescript/rule-name": "error"
