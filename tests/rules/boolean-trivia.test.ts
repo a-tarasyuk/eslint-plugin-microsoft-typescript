@@ -1,15 +1,16 @@
-import { RuleTester, TS_CONFIG_PATH } from '../support/RuleTester';
+import { RuleTester, ROOT_DIR } from '../support/RuleTester';
 import rule from '../../src/rules/boolean-trivia';
 
 const ruleTester = new RuleTester({
   parserOptions: {
     warnOnUnsupportedTypeScriptVersion: false,
+    tsconfigRootDir: ROOT_DIR,
     ecmaFeatures: {},
     ecmaVersion: 6,
     sourceType: 'module',
-    project: TS_CONFIG_PATH,
+    project: './tsconfig.json',
   },
-  parser: '@typescript-eslint/parser',
+  parser: require.resolve('@typescript-eslint/parser'),
 });
 
 ruleTester.run('boolean-trivia', rule, {

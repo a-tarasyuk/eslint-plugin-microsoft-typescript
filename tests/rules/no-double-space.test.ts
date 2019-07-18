@@ -1,14 +1,15 @@
-import { TS_CONFIG_PATH, RuleTester } from '../support/RuleTester';
+import { RuleTester, ROOT_DIR } from '../support/RuleTester';
 import rule from '../../src/rules/no-double-space';
 
 const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
+  parser: require.resolve('@typescript-eslint/parser'),
   parserOptions: {
     warnOnUnsupportedTypeScriptVersion: false,
+    tsconfigRootDir: ROOT_DIR,
     ecmaFeatures: {},
     ecmaVersion: 6,
     sourceType: 'module',
-    project: TS_CONFIG_PATH,
+    project: './tsconfig.json',
   },
 });
 
